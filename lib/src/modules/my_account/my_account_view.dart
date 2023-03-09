@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:controller/src/core/theme/theme.dart';
 import 'package:controller/src/data/models/user_model.dart';
 import 'package:controller/src/modules/my_account/widgets/create_account_widget.dart';
 import 'package:controller/src/modules/my_account/widgets/login_widget.dart';
@@ -6,6 +7,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:provider/provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:system_theme/system_theme.dart';
 
 import 'my_account_controller.dart';
@@ -46,44 +48,67 @@ class MyAccountView extends StatelessWidget {
                               title: const Text('My Account'),
                               content: Padding(
                                 padding: const EdgeInsets.only(left: 2),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
+                                child: Row(
                                   children: [
-                                    AutoSizeText(
-                                      "Name: ${snapshot.data!.displayName!}",
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.normal,
+                                    QrImage(
+                                      foregroundColor:
+                                          FluentTheme.of(context).brightness ==
+                                                  Brightness.dark
+                                              ? Colors.white
+                                              : Colors.black,
+                                      data: snapshot.data!.email!,
+                                      version: QrVersions.auto,
+                                      size: 70,
+                                      gapless: false,
+                                      padding: const EdgeInsets.only(
+                                        left: 0,
+                                        right: 0,
+                                        top: 2,
+                                        bottom: 0,
                                       ),
                                     ),
-                                    const SizedBox(height: 10),
-                                    AutoSizeText(
-                                      "Email: ${snapshot.data!.email!}",
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.normal,
-                                      ),
+                                    const SizedBox(width: 10),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        AutoSizeText(
+                                          "Name: ${snapshot.data!.displayName!}",
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        AutoSizeText(
+                                          "Email: ${snapshot.data!.email!}",
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        AutoSizeText(
+                                          "Member since: ${snapshot.data!.registerDate!}",
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
+                                        // const SizedBox(height: 10),
+                                        // Row(
+                                        //   children: [
+                                        //     const Text('Dark Mode: '),
+                                        //     Switch(
+                                        //       value: SystemTheme.isDarkMode,
+                                        //       onChanged: (value) {
+                                        //         SystemTheme.setTheme(value
+                                        //             ? SystemThemeMode.dark
+                                        //             : SystemThemeMode.light);
+                                        //       },
+                                        //     ),
+                                        //   ],
+                                        // ),
+                                      ],
                                     ),
-                                    const SizedBox(height: 10),
-                                    AutoSizeText(
-                                      "Member since: ${snapshot.data!.registerDate!}",
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                    // const SizedBox(height: 10),
-                                    // Row(
-                                    //   children: [
-                                    //     const Text('Dark Mode: '),
-                                    //     Switch(
-                                    //       value: SystemTheme.isDarkMode,
-                                    //       onChanged: (value) {
-                                    //         SystemTheme.setTheme(value
-                                    //             ? SystemThemeMode.dark
-                                    //             : SystemThemeMode.light);
-                                    //       },
-                                    //     ),
-                                    //   ],
-                                    // ),
                                   ],
                                 ),
                               ),

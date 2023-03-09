@@ -4,6 +4,7 @@ import 'package:controller/src/data/services/authentication_service.dart';
 import 'package:controller/src/modules/my_account/my_account_controller.dart';
 import 'package:controller/src/modules/navigator/navigator_controller.dart';
 import 'package:controller/src/modules/navigator/navigator_view.dart';
+import 'package:controller/src/modules/settings/settings_controller.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firedart/auth/user_gateway.dart';
 import 'package:fluent_ui/fluent_ui.dart';
@@ -30,6 +31,8 @@ class Lumitech extends StatelessWidget {
         ChangeNotifierProvider<HomeController>(create: (_) => HomeController()),
         ChangeNotifierProvider<MyAccountController>(
             create: (_) => MyAccountController()),
+        ChangeNotifierProvider<SettingsController>(
+            create: (_) => SettingsController()),
       ],
       child: FluentApp(
         debugShowCheckedModeBanner: false,
@@ -45,7 +48,7 @@ class Lumitech extends StatelessWidget {
           accentColor: SystemTheme.accentColor.accent.toAccentColor(),
           scaffoldBackgroundColor: Colors.grey[210],
         ),
-        themeMode: ThemeMode.dark,
+        themeMode: ThemeMode.light,
         home: const NavigatorView(),
       ),
     );

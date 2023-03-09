@@ -1,9 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:badges/badges.dart';
+import 'package:controller/src/modules/settings/settings_view.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:provider/provider.dart';
-import 'package:system_theme/system_theme.dart';
 import '../home/home_view.dart';
 import '../my_account/my_account_view.dart';
 import 'navigator_controller.dart';
@@ -61,15 +60,11 @@ class _NavigatorViewState extends State<NavigatorView> {
                   title: const Text("Scenarios"),
                   body: HomeView()),
               PaneItem(
-                  icon: const Icon(FluentIcons.lightbulb),
-                  title: const Text("Devices"),
-                  body: HomeView()),
+                  icon: const Icon(FluentIcons.settings),
+                  title: const Text("Settings"),
+                  body: SettingsView()),
             ],
             footerItems: [
-              // PaneItem(
-              //     icon: const Icon(FluentIcons.settings),
-              //     title: const Text("Settings"),
-              //     body: HomeView()),
               PaneItemAction(
                 icon: const Icon(FluentIcons.contact),
                 title: const Text("My Account"),
