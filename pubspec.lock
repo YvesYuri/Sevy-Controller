@@ -129,6 +129,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.0.11"
+  email_validator:
+    dependency: "direct main"
+    description:
+      name: email_validator
+      sha256: e9a90f27ab2b915a27d7f9c2a7ddda5dd752d6942616ee83529b686fc086221b
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.17"
   fake_async:
     dependency: transitive
     description:
@@ -210,13 +218,13 @@ packages:
     source: hosted
     version: "1.0.2"
   firebase_core_platform_interface:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: firebase_core_platform_interface
-      sha256: "5615b30c36f55b2777d0533771deda7e5730e769e5d3cb7fda79e9bed86cfa55"
+      sha256: b51257a8b4388565cd66062d727d3e60067b5f5cc3390eb0ecd20b8f97741bdb
       url: "https://pub.dev"
     source: hosted
-    version: "4.5.3"
+    version: "4.5.1"
   firebase_core_web:
     dependency: transitive
     description:
@@ -334,7 +342,7 @@ packages:
     source: hosted
     version: "4.0.2"
   intl:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: intl
       sha256: "910f85bce16fb5c6f614e117efa303e85a1731bb0081edf3604a2ae6e9a3cc91"

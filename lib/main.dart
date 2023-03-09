@@ -1,8 +1,11 @@
 import 'package:controller/firebase_options.dart';
+import 'package:controller/src/data/models/user_model.dart';
+import 'package:controller/src/data/services/authentication_service.dart';
 import 'package:controller/src/modules/my_account/my_account_controller.dart';
 import 'package:controller/src/modules/navigator/navigator_controller.dart';
 import 'package:controller/src/modules/navigator/navigator_view.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firedart/auth/user_gateway.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:system_theme/system_theme.dart';
@@ -10,8 +13,8 @@ import 'package:system_theme/system_theme.dart';
 import 'src/modules/home/home_controller.dart';
 
 void main() async {
-    WidgetsFlutterBinding.ensureInitialized();
-    await Firebase.initializeApp();
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const Lumitech());
 }
 
@@ -42,7 +45,7 @@ class Lumitech extends StatelessWidget {
           accentColor: SystemTheme.accentColor.accent.toAccentColor(),
           scaffoldBackgroundColor: Colors.grey[210],
         ),
-        themeMode: ThemeMode.light,
+        themeMode: ThemeMode.dark,
         home: const NavigatorView(),
       ),
     );

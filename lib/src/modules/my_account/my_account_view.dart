@@ -1,4 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:controller/src/data/models/user_model.dart';
+import 'package:controller/src/modules/my_account/widgets/create_account_widget.dart';
+import 'package:controller/src/modules/my_account/widgets/login_widget.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -10,142 +13,134 @@ import 'my_account_controller.dart';
 class MyAccountView extends StatelessWidget {
   const MyAccountView({super.key});
 
-  Widget newUserWidget() {
-    return const Center(
-      child: Text("New User"),
-    );
-  }
-
-  Widget loginWidget() {
-    return const Center(
-      child: Text("My Account"),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Consumer<MyAccountController>(
         builder: (context, myAccountController, child) {
-      return AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
-        child: myAccountController.newUser
-            ? ContentDialog(
-                key: const Key('1'),
-                title: const Text('Create Account'),
-                content: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const SizedBox(height: 10),
-                    TextBox(
-                      placeholder: 'Name',
-                      onChanged: (value) {},
-                    ),
-                    const SizedBox(height: 10),
-                    TextBox(
-                      placeholder: 'Email',
-                      onChanged: (value) {},
-                    ),
-                    const SizedBox(height: 10),
-                    TextBox(
-                      placeholder: 'Password',
-                      onChanged: (value) {},
-                    ),
-                    const SizedBox(height: 10),
-                    TextBox(
-                      placeholder: 'Confirm Password',
-                      onChanged: (value) {},
-                    ),
-                  ],
-                ),
-                actions: [
-                  Button(
-                    child: const Text('Back'),
-                    onPressed: () {
-                      myAccountController.changeNewUser(false);
-                    },
-                  ),
-                  Button(
-                    child: const Text('Cancel'),
-                    onPressed: () {
-                      myAccountController.changeNewUser(false);
-                      Navigator.pop(context);
-                    },
-                  ),
-                  FilledButton(
-                    child: const Text('Create'),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
-              )
-            : ContentDialog(
-                key: const Key('2'),
-                title: const Text('Login'),
-                content: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const SizedBox(height: 10),
-                    TextBox(
-                      placeholder: 'Email',
-                      onChanged: (value) {},
-                    ),
-                    const SizedBox(height: 10),
-                    TextBox(
-                      placeholder: 'Password',
-                      onChanged: (value) {},
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const AutoSizeText(
-                          'New User? ',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.normal,
+      return StreamBuilder<UserModel?>(
+          stream: myAccountController.authStateChanges,
+          builder: (context, snapshot) {
+            return Stack(
+              children: [
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  child: !snapshot.hasData
+                      ? Container(
+                          padding: const EdgeInsets.all(15),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.5),
+                            borderRadius: BorderRadius.circular(4),
                           ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            myAccountController.changeNewUser(true);
-                          },
-                          child: MouseRegion(
-                            cursor: SystemMouseCursors.click,
-                            child: AutoSizeText(
-                              'Create account!',
-                              style: TextStyle(
-                                color: SystemTheme.accentColor.accent,
-                                fontSize: 14,
-                                fontWeight: FontWeight.normal,
-                              ),
+                          height: 60,
+                          width: 60,
+                          child: const FittedBox(
+                            fit: BoxFit.fill,
+                            child: ProgressRing(
+                              strokeWidth: 3,
                             ),
                           ),
-                        ),
-                      ],
-                    )
-                  ],
+                        )
+                      : (snapshot.hasData && snapshot.data!.email != null
+                          ? ContentDialog(
+                              key: const Key('1'),
+                              title: const Text('My Account'),
+                              content: Padding(
+                                padding: const EdgeInsets.only(left: 2),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    AutoSizeText(
+                                      "Name: ${snapshot.data!.displayName!}",
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    AutoSizeText(
+                                      "Email: ${snapshot.data!.email!}",
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    AutoSizeText(
+                                      "Member since: ${snapshot.data!.registerDate!}",
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    ),
+                                    // const SizedBox(height: 10),
+                                    // Row(
+                                    //   children: [
+                                    //     const Text('Dark Mode: '),
+                                    //     Switch(
+                                    //       value: SystemTheme.isDarkMode,
+                                    //       onChanged: (value) {
+                                    //         SystemTheme.setTheme(value
+                                    //             ? SystemThemeMode.dark
+                                    //             : SystemThemeMode.light);
+                                    //       },
+                                    //     ),
+                                    //   ],
+                                    // ),
+                                  ],
+                                ),
+                              ),
+                              actions: [
+                                Button(
+                                  child: const Text('Close'),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                                FilledButton(
+                                  child: const Text('Logout'),
+                                  onPressed: () {
+                                    myAccountController.signOut();
+                                  },
+                                ),
+                              ],
+                            )
+                          : AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 300),
+                              child: myAccountController.newUser
+                                  ? CreateAccountWidget(
+                                      myAccountController: myAccountController,
+                                    )
+                                  : LoginWidget(
+                                      myAccountController: myAccountController,
+                                    ))),
                 ),
-                actions: [
-                  Button(
-                    child: const Text('Cancel'),
-                    onPressed: () {
-                      myAccountController.changeNewUser(false);
-                      Navigator.pop(context);
-                      // Delete file here
-                    },
+                Visibility(
+                  visible: myAccountController.state == MyAccountState.loading,
+                  child: Container(
+                    // height: 60,
+                    // width: 60,
+                    decoration: const BoxDecoration(
+                      color: Colors.transparent,
+                    ),
+                    alignment: Alignment.center,
+                    child: Container(
+                      padding: const EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.5),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      height: 60,
+                      width: 60,
+                      child: const FittedBox(
+                        fit: BoxFit.fill,
+                        child: ProgressRing(
+                          strokeWidth: 3,
+                        ),
+                      ),
+                    ),
                   ),
-                  FilledButton(
-                    child: const Text('Login'),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
-              ),
-      );
+                ),
+              ],
+            );
+          });
     });
   }
 }

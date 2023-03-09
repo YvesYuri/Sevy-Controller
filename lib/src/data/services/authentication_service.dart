@@ -1,42 +1,52 @@
-import 'package:firedart/firedart.dart';
+import 'package:controller/src/data/models/user_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 
 class AuthenticationService {
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  
-  Future signInState() async {
-    return _firebaseAuth.isSignedIn;
-  }
-  
+  static final AuthenticationService instance =
+      AuthenticationService._internal();
 
-  Future currentUser() async {
-    var user = await _firebaseAuth.getUser();
-    // String localId = user.id;
-    // String? email = user.email;
-    return user;
+  factory AuthenticationService() {
+    return instance;
   }
 
-  Future signUp(String email, String pass, String displayName) async {
+  AuthenticationService._internal();
+
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+
+  Stream<UserModel?> authStateChanges() =>
+      firebaseAuth.userChanges().map((event) => event == null
+          ? UserModel()
+          : UserModel(
+              email: event.email,
+              displayName: event.displayName,
+              registerDate: DateFormat("dd/MM/yyyy")
+                  .format(event.metadata.creationTime!)));
+
+  Future<String> signIn(String email, String password) async {
+    UserCredential result = await firebaseAuth.signInWithEmailAndPassword(
+        email: email, password: password);
+    User user = result.user!;
+    return user.email!;
+  }
+
+  Future<String> signUp(
+      String displayName, String email, String password) async {
+    UserCredential result = await firebaseAuth.createUserWithEmailAndPassword(
+        email: email, password: password);
+    User user = result.user!;
+    var currentUser = firebaseAuth.currentUser;
+    await user.reload();
+    user.updateDisplayName(displayName);
+    user.sendEmailVerification();
+    return user.email!;
+  }
+
+  Future<void> signOut() async {
     try {
-      await _firebaseAuth.signUp(email, pass);
-      await _firebaseAuth.updateProfile(displayName: displayName);
-      var user = await _firebaseAuth.getUser();
-      return user;
-    } catch(e) {
-      return e.toString();
+      return await firebaseAuth.signOut();
+    } catch (e) {
+      print(e.toString());
     }
-  }
-
-  Future signIn(String email, String pass) async {
-    try {
-      await _firebaseAuth.signIn(email, pass);
-      var user = await _firebaseAuth.getUser();
-      return user;
-    } catch(e) {
-      return e.toString();
-    }
-  }
-
-  Future signOut() async {
-    return _firebaseAuth.signOut();
   }
 }
