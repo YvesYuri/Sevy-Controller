@@ -6,7 +6,6 @@ import 'package:controller/src/modules/navigator/navigator_controller.dart';
 import 'package:controller/src/modules/navigator/navigator_view.dart';
 import 'package:controller/src/modules/settings/settings_controller.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firedart/auth/user_gateway.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:system_theme/system_theme.dart';
@@ -19,9 +18,18 @@ void main() async {
   runApp(const Lumitech());
 }
 
-class Lumitech extends StatelessWidget {
+class Lumitech extends StatefulWidget {
   const Lumitech({super.key});
 
+  void initState() {
+    
+  }
+
+  @override
+  State<Lumitech> createState() => _LumitechState();
+}
+
+class _LumitechState extends State<Lumitech> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -34,23 +42,25 @@ class Lumitech extends StatelessWidget {
         ChangeNotifierProvider<SettingsController>(
             create: (_) => SettingsController()),
       ],
-      child: FluentApp(
-        debugShowCheckedModeBanner: false,
-        //color: SystemTheme.accentColor.accent.toAccentColor(),
-        theme: FluentThemeData(
-          brightness: Brightness.light,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-          accentColor: SystemTheme.accentColor.accent.toAccentColor(),
-        ),
-        darkTheme: FluentThemeData(
-          brightness: Brightness.dark,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-          accentColor: SystemTheme.accentColor.accent.toAccentColor(),
-          scaffoldBackgroundColor: Colors.grey[210],
-        ),
-        themeMode: ThemeMode.light,
-        home: const NavigatorView(),
-      ),
+      child: Consumer<SettingsController>(
+          builder: (context, settingsController, child) {
+        return FluentApp(
+          debugShowCheckedModeBanner: false,
+          theme: FluentThemeData(
+            brightness: Brightness.light,
+            visualDensity: VisualDensity.adaptivePlatformDensity,
+            accentColor: settingsController.accentColor,
+          ),
+          darkTheme: FluentThemeData(
+            brightness: Brightness.dark,
+            visualDensity: VisualDensity.adaptivePlatformDensity,
+            accentColor: settingsController.accentColor,
+            scaffoldBackgroundColor: Colors.grey[210],
+          ),
+          themeMode: settingsController.themeMode,
+          home: const NavigatorView(),
+        );
+      }),
     );
   }
 }

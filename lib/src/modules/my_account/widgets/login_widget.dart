@@ -1,4 +1,3 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:controller/src/modules/my_account/my_account_controller.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -64,7 +63,7 @@ class LoginWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const AutoSizeText(
+              const Text(
                 'New User? ',
                 style: TextStyle(
                   fontSize: 14,
@@ -77,10 +76,10 @@ class LoginWidget extends StatelessWidget {
                 },
                 child: MouseRegion(
                   cursor: SystemMouseCursors.click,
-                  child: AutoSizeText(
+                  child: Text(
                     'Create account!',
                     style: TextStyle(
-                      color: SystemTheme.accentColor.accent,
+                      color: FluentTheme.of(context).accentColor,
                       fontSize: 14,
                       fontWeight: FontWeight.normal,
                     ),

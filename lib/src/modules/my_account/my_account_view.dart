@@ -1,5 +1,3 @@
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:controller/src/core/theme/theme.dart';
 import 'package:controller/src/data/models/user_model.dart';
 import 'package:controller/src/modules/my_account/widgets/create_account_widget.dart';
 import 'package:controller/src/modules/my_account/widgets/login_widget.dart';
@@ -73,21 +71,21 @@ class MyAccountView extends StatelessWidget {
                                           CrossAxisAlignment.start,
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        AutoSizeText(
+                                        Text(
                                           "Name: ${snapshot.data!.displayName!}",
                                           style: const TextStyle(
                                             fontWeight: FontWeight.normal,
                                           ),
                                         ),
                                         const SizedBox(height: 10),
-                                        AutoSizeText(
+                                        Text(
                                           "Email: ${snapshot.data!.email!}",
                                           style: const TextStyle(
                                             fontWeight: FontWeight.normal,
                                           ),
                                         ),
                                         const SizedBox(height: 10),
-                                        AutoSizeText(
+                                        Text(
                                           "Member since: ${snapshot.data!.registerDate!}",
                                           style: const TextStyle(
                                             fontWeight: FontWeight.normal,

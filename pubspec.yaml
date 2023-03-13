@@ -36,13 +36,10 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   fluent_ui: ^4.4.0
-  flutter_acrylic: ^1.1.1
   system_theme: ^2.1.0
   provider: ^6.0.5
-  auto_size_text: ^3.0.0
   auto_animated: ^3.1.0
   http: ^0.13.5
-  firedart: ^0.9.0+1
   firebase_auth_desktop: ^1.0.2
   firebase_core_desktop: ^1.0.2
   firebase_core: ^1.24.0
@@ -51,7 +48,13 @@ dependencies:
   email_validator: ^2.1.17
   intl: ^0.17.0
   qr_flutter: ^4.0.0
-  badges: ^3.0.2
+  shared_preferences: ^2.0.18
+  sqflite: ^2.0.0+3
+  sqflite_common_ffi: ^2.0.0+1
+  uuid: ^3.0.7
+  internet_connection_checker: ^1.0.0+1
+  connectivity_plus: ^3.0.3
+  strings: ^0.2.2
 
 dev_dependencies:
   flutter_test:

@@ -1,11 +1,14 @@
 import 'dart:convert';
 
 import 'package:auto_animated/auto_animated.dart';
-import 'package:auto_size_text/auto_size_text.dart';
+import 'package:controller/src/modules/home/widgets/delete_room_widget.dart';
+import 'package:controller/src/modules/home/widgets/room_widget.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/material.dart' as material;
 import 'package:provider/provider.dart';
-import 'package:system_theme/system_theme.dart';
+import 'package:strings/strings.dart';
 
+import '../../data/models/room_model.dart';
 import 'home_controller.dart';
 
 class HomeView extends StatefulWidget {
@@ -16,329 +19,51 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  void showNewRoom() {
+  void showRoom() {
     showDialog(
       context: context,
       builder: (context) {
-        return Consumer<HomeController>(
-            builder: (context, homeController, child) {
-          return Stack(
-            alignment: Alignment.center,
-            children: [
-              ContentDialog(
-                title: const Text('New Room'),
-                content: SizedBox(
-                  height: 60,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Flexible(
-                        flex: 20,
-                        child: Container(
-                          height: double.maxFinite,
-                          width: double.maxFinite,
-                          alignment: Alignment.bottomRight,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            image: DecorationImage(
-                              image: NetworkImage(
-                                homeController.storedImage,
-                              ),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          child: IconButton(
-                            style: ButtonStyle(
-                              backgroundColor: ButtonState.all(
-                                Colors.black.withOpacity(0.5),
-                              ),
-                            ),
-                            icon: const Icon(
-                              FluentIcons.camera,
-                              size: 16,
-                              color: Colors.white,
-                            ),
-                            onPressed: () {
-                              homeController.getRandomImages();
-                              showSelectImage();
-                            },
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Flexible(
-                        flex: 80,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          //mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Padding(
-                              padding: EdgeInsets.only(
-                                left: 3,
-                              ),
-                              child: AutoSizeText(
-                                "Name",
-                                textAlign: TextAlign.center,
-                                minFontSize: 1,
-                                stepGranularity: 1,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                                maxLines: 1,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            TextBox(
-                              placeholder: 'Ex: Living Room',
-                              expands: false,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                actions: [
-                  Button(
-                    child: const Text('Cancel'),
-                    onPressed: () {
-                      homeController.clearNewRoom();
-                      Navigator.pop(context, 'User cancel new room');
-                      // Delete file here
-                    },
-                  ),
-                  FilledButton(
-                    child: const Text('Add'),
-                    onPressed: () {
-                      Navigator.pop(context, 'User added new room');
-                    },
-                  ),
-                ],
-              ),
-              Visibility(
-                visible: homeController.newRoomState == NewRoomState.loading,
-                child: Container(
-                  // height: 60,
-                  // width: 60,
-                  decoration: const BoxDecoration(
-                    color: Colors.transparent,
-                  ),
-                  alignment: Alignment.center,
-                  child: Container(
-                    padding: const EdgeInsets.all(15),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.5),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    height: 60,
-                    width: 60,
-                    child: const FittedBox(
-                      fit: BoxFit.fill,
-                      child: ProgressRing(
-                        strokeWidth: 3,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          );
-        });
+        return const RoomWidget();
       },
     );
   }
 
-  void showSelectImage() {
+  void showDeleteRoom(RoomModel room) {
     showDialog(
       context: context,
       builder: (context) {
-        return Consumer<HomeController>(
-            builder: (context, homeController, child) {
-          return Stack(
-            children: [
-              ContentDialog(
-                constraints: const BoxConstraints.expand(
-                  height: 600,
-                  width: 800,
-                ),
-                title: const Text('Select Image'),
-                content: Column(
-                  children: [
-                    Flexible(
-                      flex: 10,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Flexible(
-                            flex: 90,
-                            child: TextBox(
-                              controller: homeController.searchImage,
-                              placeholder: 'Ex: Living Room',
-                              expands: false,
-                              prefix: Padding(
-                                padding: const EdgeInsets.only(left: 8),
-                                child: Icon(
-                                  FluentIcons.search,
-                                  color: SystemTheme.accentColor.accent,
-                                  size: 12,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Flexible(
-                            flex: 10,
-                            child: FilledButton(
-                                child: const AutoSizeText(
-                                  "Search",
-                                  textAlign: TextAlign.center,
-                                  minFontSize: 1,
-                                  stepGranularity: 1,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                  maxLines: 1,
-                                ),
-                                onPressed: () async {
-                                  await homeController.searchImages(
-                                    homeController.searchImage.text,
-                                  );
-                                }),
-                          )
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Flexible(
-                      flex: 90,
-                      child: LiveGrid.options(
-                        itemBuilder: (context, index, animation) {
-                          return FadeTransition(
-                            opacity: Tween<double>(
-                              begin: 0,
-                              end: 1,
-                            ).animate(animation),
-                            child: GestureDetector(
-                              onTap: () {
-                                homeController.selectImage(
-                                  homeController.urlImages[index],
-                                );
-                              },
-                              child: MouseRegion(
-                                cursor: SystemMouseCursors.click,
-                                child: Container(
-                                  height: double.maxFinite,
-                                  width: double.maxFinite,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[170],
-                                    borderRadius: BorderRadius.circular(4),
-                                    image: DecorationImage(
-                                      image: NetworkImage(
-                                        homeController.urlImages[index]
-                                            .toString(),
-                                      ),
-                                      fit: BoxFit.cover,
-                                    ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.1),
-                                        spreadRadius: 1,
-                                        blurRadius: 7,
-                                        offset: const Offset(0, 3),
-                                      ),
-                                    ],
-                                    border: homeController.selectedImage ==
-                                            homeController.urlImages[index]
-                                                .toString()
-                                        ? Border.all(
-                                            color:
-                                                SystemTheme.accentColor.accent,
-                                            width: 3,
-                                          )
-                                        : null,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          mainAxisSpacing: 15,
-                          crossAxisSpacing: 15,
-                          childAspectRatio: 16 / 9,
-                        ),
-                        itemCount: homeController.urlImages.length,
-                        options: const LiveOptions(
-                          delay: Duration(milliseconds: 250),
-                          showItemInterval: Duration(milliseconds: 125),
-                          showItemDuration: Duration(milliseconds: 250),
-                          visibleFraction: 0.02,
-                          reAnimateOnVisibility: true,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                actions: [
-                  Button(
-                    child: const Text('Cancel'),
-                    onPressed: () {
-                      homeController.clearSelectImageForm();
-                      Navigator.pop(context, 'User cancel select image');
-                      // Delete file here
-                    },
-                  ),
-                  FilledButton(
-                    child: const Text('Select'),
-                    onPressed: () {
-                      homeController.storeImage();
-                      Navigator.pop(context, 'User selected image');
-                    },
-                  ),
-                ],
-              ),
-              Visibility(
-                visible:
-                    homeController.selectImageState == SelectImageState.loading,
-                child: Container(
-                  // height: 60,
-                  // width: 60,
-                  decoration: const BoxDecoration(
-                    color: Colors.transparent,
-                  ),
-                  alignment: Alignment.center,
-                  child: Container(
-                    padding: const EdgeInsets.all(15),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.5),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    height: 60,
-                    width: 60,
-                    child: const FittedBox(
-                      fit: BoxFit.fill,
-                      child: ProgressRing(
-                        strokeWidth: 3,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          );
-        });
+        return DeleteRoomWidget(
+          room: room,
+        );
       },
     );
+  }
+
+  void showMessage(BuildContext context, String title, String message,
+      InfoBarSeverity severity) {
+    displayInfoBar(
+      context,
+      builder: (context, close) {
+        return InfoBar(
+          title: Text(title),
+          content: Text(message),
+          action: IconButton(
+            icon: const Icon(FluentIcons.clear),
+            onPressed: close,
+          ),
+          severity: severity,
+        );
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    final homeController = Provider.of<HomeController>(context, listen: false);
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await homeController.getRooms();
+    });
   }
 
   @override
@@ -347,13 +72,13 @@ class _HomeViewState extends State<HomeView> {
     return ScaffoldPage(
       header: const Padding(
         padding: EdgeInsets.symmetric(
-          horizontal: 15,
+          horizontal: 24,
         ),
         child: Text(
           "Home",
           style: TextStyle(
             // color: Colors.white,
-            fontSize: 20,
+            fontSize: 24,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -369,7 +94,7 @@ class _HomeViewState extends State<HomeView> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: 9,
+              horizontal: 20,
             ),
             child: CommandBar(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -378,22 +103,22 @@ class _HomeViewState extends State<HomeView> {
               primaryItems: [
                 CommandBarButton(
                   icon: Icon(FluentIcons.room,
-                      color: SystemTheme.accentColor.accent),
+                      color: FluentTheme.of(context).accentColor),
                   label: const Text('New Room'),
                   onPressed: () {
                     homeController.setNewRoom();
-                    showNewRoom();
+                    showRoom();
                   },
                 ),
                 CommandBarButton(
                   icon: Icon(FluentIcons.lightbulb,
-                      color: SystemTheme.accentColor.accent),
+                      color: FluentTheme.of(context).accentColor),
                   label: const Text('New Device'),
                   onPressed: () {},
                 ),
                 CommandBarButton(
                   icon: Icon(FluentIcons.sort,
-                      color: SystemTheme.accentColor.accent),
+                      color: FluentTheme.of(context).accentColor),
                   label: const Text('Sort'),
                   onPressed: () {},
                 ),
@@ -403,98 +128,294 @@ class _HomeViewState extends State<HomeView> {
           const SizedBox(
             height: 15,
           ),
-          Flexible(
-            flex: 15,
-            child: LiveGrid.options(
-              itemBuilder: (context, index, animation) {
-                return FadeTransition(
-                  opacity: Tween<double>(
-                    begin: 0,
-                    end: 1,
-                  ).animate(animation),
-                  child: Container(
-                    height: double.maxFinite,
-                    width: double.maxFinite,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[170],
-                      borderRadius: BorderRadius.circular(4),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          spreadRadius: 1,
-                          blurRadius: 7,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        Flexible(
-                          flex: 70,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(4),
-                                  topRight: Radius.circular(4)),
+          SizedBox(
+            height: 78,
+            width: double.maxFinite,
+            child: Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    homeController.clearCurrentRoom();
+                  },
+                  child: MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: Container(
+                      height: double.maxFinite,
+                      width: 118,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        border: homeController.currentRoom == null
+                            ? Border.all(
+                                color: FluentTheme.of(context).accentColor,
+                                width: 2,
+                              )
+                            : null,
+                      ),
+                      margin: const EdgeInsets.only(
+                        left: 24,
+                      ),
+                      child: Column(
+                        children: [
+                          Flexible(
+                            flex: 70,
+                            child: Container(
+                              height: double.maxFinite,
+                              width: double.maxFinite,
+                              alignment: Alignment.center,
+                              decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(4),
+                                    topRight: Radius.circular(4)),
+                              ),
+                              child: Icon(
+                                FluentIcons.lightbulb,
+                                color: FluentTheme.of(context).accentColor,
+                                size: 30,
+                              ),
                             ),
                           ),
-                        ),
-                        Flexible(
-                          flex: 30,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                AutoSizeText(
-                                  "Room $index",
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  maxLines: 1,
-                                ),
-                                IconButton(
-                                  icon: Icon(FluentIcons.more,
-                                      color: SystemTheme.accentColor.accent),
-                                  onPressed: () {},
-                                ),
-                              ],
+                          Flexible(
+                            flex: 30,
+                            child: Container(
+                              height: double.maxFinite,
+                              width: double.maxFinite,
+                              alignment: Alignment.center,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                              ),
+                              child: const Text(
+                                "All Devices",
+                                style: TextStyle(
+                                    fontSize: 12, fontWeight: FontWeight.bold),
+                                maxLines: 1,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                );
-              },
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 15,
-              ),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 1,
-                mainAxisSpacing: 15,
-                childAspectRatio: 10 / 15,
-              ),
-              itemCount: 6,
-              options: const LiveOptions(
-                delay: Duration(milliseconds: 250),
-                showItemInterval: Duration(milliseconds: 125),
-                showItemDuration: Duration(milliseconds: 250),
-                visibleFraction: 0.02,
-                reAnimateOnVisibility: true,
-              ),
+                ),
+                const SizedBox(
+                  width: 15,
+                ),
+                Expanded(
+                  child: LiveGrid.options(
+                    itemBuilder: (context, index, animation) {
+                      var room = homeController.rooms[index];
+                      return FadeTransition(
+                        opacity: Tween<double>(
+                          begin: 0,
+                          end: 1,
+                        ).animate(animation),
+                        child: GestureDetector(
+                          onTap: () {
+                            homeController.setCurrentRoom(room.id!);
+                          },
+                          child: MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            child: Container(
+                              height: double.maxFinite,
+                              width: double.maxFinite,
+                              alignment: Alignment.bottomCenter,
+                              decoration: BoxDecoration(
+                                border: homeController.currentRoom == room.id
+                                    ? Border.all(
+                                        color:
+                                            FluentTheme.of(context).accentColor,
+                                        width: 2,
+                                      )
+                                    : null,
+                                image: DecorationImage(
+                                  image: Image.memory(base64Decode(room.cover!))
+                                      .image,
+                                  fit: BoxFit.cover,
+                                ),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Container(
+                                padding: const EdgeInsets.all(
+                                  5,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: FluentTheme.of(context).brightness ==
+                                          Brightness.light
+                                      ? Colors.white.withOpacity(0.7)
+                                      : Colors.black.withOpacity(0.7),
+                                  borderRadius: const BorderRadius.only(
+                                    bottomLeft: Radius.circular(4),
+                                    bottomRight: Radius.circular(4),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      capitalize(room.name!),
+                                      style: const TextStyle(
+                                        // color: Colors.white,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      maxLines: 1,
+                                    ),
+                                    material.Material(
+                                      color: Colors.transparent,
+                                      child: material.PopupMenuButton(
+                                        shape: const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(8),
+                                          ),
+                                        ),
+                                        color:
+                                            FluentTheme.of(context).menuColor,
+                                        // icon: const Icon(
+                                        //   FluentIcons.more,
+                                        //   size: 16,
+                                        // ),
+                                        splashRadius: 0,
+                                        tooltip: "Options for this room",
+                                        itemBuilder: (context) => [
+                                          material.PopupMenuItem(
+                                            height: 30,
+                                            value: 1,
+                                            child: Row(
+                                              children: [
+                                                const Icon(
+                                                  FluentIcons.power_button,
+                                                  size: 14,
+                                                ),
+                                                const SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Text(
+                                                  "Turn on all devices",
+                                                  style: FluentTheme.of(context)
+                                                      .typography
+                                                      .body,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          material.PopupMenuItem(
+                                            height: 30,
+                                            value: 2,
+                                            child: Row(
+                                              children: [
+                                                const Icon(
+                                                  FluentIcons.power_button,
+                                                  size: 14,
+                                                ),
+                                                const SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Text(
+                                                  "Turn off all devices",
+                                                  style: FluentTheme.of(context)
+                                                      .typography
+                                                      .body,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          material.PopupMenuItem(
+                                            height: 30,
+                                            value: 3,
+                                            child: Row(
+                                              children: [
+                                                const Icon(
+                                                  FluentIcons.edit,
+                                                  size: 14,
+                                                ),
+                                                const SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Text(
+                                                  "Edit",
+                                                  style: FluentTheme.of(context)
+                                                      .typography
+                                                      .body,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          material.PopupMenuItem(
+                                            height: 30,
+                                            value: 4,
+                                            child: Row(
+                                              children: [
+                                                const Icon(
+                                                  FluentIcons.delete,
+                                                  size: 14,
+                                                ),
+                                                const SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Text(
+                                                  "Delete",
+                                                  style: FluentTheme.of(context)
+                                                      .typography
+                                                      .body,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                        onSelected: (value) {
+                                          if (value == 1) {
+                                          } else if (value == 2) {
+                                          } else if (value == 3) {
+                                            homeController.setEditRoom(room);
+                                            showRoom();
+                                          } else if (value == 4) {
+                                            showDeleteRoom(room);
+                                          }
+                                        },
+                                        child: const Icon(
+                                          FluentIcons.more,
+                                          size: 18,
+                                          // color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    scrollDirection: homeController.rooms.isNotEmpty
+                        ? Axis.horizontal
+                        : Axis.vertical,
+                    padding: const EdgeInsets.only(
+                      right: 24,
+                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithMaxCrossAxisExtent(
+                      mainAxisSpacing: 15,
+                      maxCrossAxisExtent: 100,
+                      childAspectRatio: 10 / 15,
+                    ),
+                    itemCount: homeController.rooms.length,
+                    options: const LiveOptions(
+                      delay: Duration(milliseconds: 250),
+                      showItemInterval: Duration(milliseconds: 125),
+                      showItemDuration: Duration(milliseconds: 250),
+                      visibleFraction: 0.02,
+                      reAnimateOnVisibility: true,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(
             height: 15,
           ),
-          Flexible(
-            flex: 85,
+          Expanded(
             child: LiveGrid.options(
               itemBuilder: (context, index, animation) {
                 return FadeTransition(
@@ -506,14 +427,15 @@ class _HomeViewState extends State<HomeView> {
                     height: double.maxFinite,
                     width: double.maxFinite,
                     decoration: BoxDecoration(
-                      color: SystemTheme.accentColor.accent.withOpacity(0.1),
+                      color:
+                          FluentTheme.of(context).accentColor.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(5),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.1),
                           spreadRadius: 1,
-                          blurRadius: 7,
-                          offset: const Offset(0, 3),
+                          blurRadius: 0,
+                          offset: const Offset(0, 0),
                         ),
                       ],
                     ),
@@ -536,7 +458,7 @@ class _HomeViewState extends State<HomeView> {
                                     child: CircleAvatar(
                                       radius: 18,
                                       backgroundColor:
-                                          SystemTheme.accentColor.accent,
+                                          FluentTheme.of(context).accentColor,
                                       child: const Icon(
                                         FluentIcons.lightbulb_solid,
                                         color: Colors.white,
@@ -554,7 +476,7 @@ class _HomeViewState extends State<HomeView> {
                                     height: double.maxFinite,
                                     width: double.maxFinite,
                                     alignment: Alignment.centerLeft,
-                                    child: AutoSizeText(
+                                    child: Text(
                                       "Device $index",
                                       style: const TextStyle(
                                         fontSize: 12,
@@ -628,13 +550,13 @@ class _HomeViewState extends State<HomeView> {
               },
               scrollDirection: Axis.vertical,
               padding: const EdgeInsets.symmetric(
-                horizontal: 15,
+                horizontal: 24,
               ),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 5,
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                 mainAxisSpacing: 15,
                 crossAxisSpacing: 15,
-                childAspectRatio: 100 / 35,
+                childAspectRatio: 200 / 70,
+                maxCrossAxisExtent: 300,
               ),
               itemCount: 6,
               options: const LiveOptions(

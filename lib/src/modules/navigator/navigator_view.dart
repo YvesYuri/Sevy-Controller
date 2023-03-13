@@ -1,5 +1,3 @@
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:badges/badges.dart';
 import 'package:controller/src/modules/settings/settings_view.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +20,12 @@ class _NavigatorViewState extends State<NavigatorView> {
         return const MyAccountView();
       },
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<NavigatorController>(context, listen: false).getConnectivity();
   }
 
   @override
@@ -65,6 +69,16 @@ class _NavigatorViewState extends State<NavigatorView> {
                   body: SettingsView()),
             ],
             footerItems: [
+              PaneItemAction(
+                icon: Icon(
+                  FluentIcons.globe,
+                  color: navigatorController.isDeviceConnected
+                      ? FluentTheme.of(context).iconTheme.color
+                      : Colors.red,
+                ),
+                title: Text(navigatorController.isDeviceConnected ? "Is Connected" : "No Internet Connection"),
+                onTap: () {},
+              ),
               PaneItemAction(
                 icon: const Icon(FluentIcons.contact),
                 title: const Text("My Account"),

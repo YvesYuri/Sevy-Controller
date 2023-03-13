@@ -3,8 +3,8 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  connectivity_plus
   desktop_webview_auth
-  flutter_acrylic
   system_theme
 )
 

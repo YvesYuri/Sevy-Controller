@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="SevyController" id="Project-212a" database="Sqlite" >
+	<schema name="Default" >
+		<table name="room" prior="Tbl" >
+			<column name="id" type="TEXT" jt="-1" mandatory="y" />
+			<column name="name" type="TEXT" jt="-1" />
+			<column name="owner" type="TEXT" jt="-1" />
+			<column name="cover" type="TEXT" jt="-1" />
+			<index name="pk_room" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<fk name="fk_room" virtual="y" to_schema="Default" to_table="user" >
+				<fk_column name="owner" pk="email" />
+			</fk>
+		</table>
+		<table name="user" prior="Tbl" >
+			<column name="email" type="TEXT" jt="-1" mandatory="y" />
+			<column name="display_name" type="TEXT" jt="-1" />
+			<column name="register_date" type="TEXT" jt="-1" />
+			<index name="pk_user" unique="PRIMARY_KEY" >
+				<column name="email" />
+			</index>
+		</table>
+	</schema>
+	<layout name="Default Layout" id="Layout-77c" show_relation="columns" >
+		<comment><![CDATA[Default Layout]]></comment>
+		<entity schema="Default" name="room" color="C1D8EE" x="256" y="48" />
+		<entity schema="Default" name="user" color="C1D8EE" x="48" y="48" />
+	</layout>
+</project>

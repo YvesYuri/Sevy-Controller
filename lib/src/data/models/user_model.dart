@@ -5,7 +5,7 @@ class UserModel {
 
   UserModel({this.displayName, this.email, this.registerDate});
 
-  UserModel.fromJson(Map<String, dynamic> json) {
+  UserModel.fromJson(Map<dynamic, dynamic> json) {
     displayName = json['displayName'];
     email = json['email'];
     registerDate = json['registerDate'];
@@ -17,5 +17,14 @@ class UserModel {
     data['email'] = email;
     data['registerDate'] = registerDate;
     return data;
+  }
+
+  Map<String, dynamic> toMap() {
+    var map = <String, dynamic>{
+      'email': email,
+      'display_name': displayName,
+      'register_date': registerDate,
+    };
+    return map;
   }
 }

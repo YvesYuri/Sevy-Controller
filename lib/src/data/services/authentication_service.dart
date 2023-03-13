@@ -49,4 +49,14 @@ class AuthenticationService {
       print(e.toString());
     }
   }
+
+  Future<UserModel> getCurrentUser() async {
+    User user = firebaseAuth.currentUser!;
+    return UserModel(
+        email: user.email,
+        displayName: user.displayName,
+        registerDate: DateFormat("dd/MM/yyyy")
+            .format(user.metadata.creationTime!)
+       );
+  }
 }
